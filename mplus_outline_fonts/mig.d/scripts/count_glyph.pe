@@ -1,0 +1,17 @@
+#!/usr/bin/env fontforge -script
+
+# formatting: perl -e '$i=0; while(<>){chomp(); print $_ . ", "; $i+=1; if($i>=8){print "\\\n";$i=0;}}' < droid_glyph.txt > droid_glyph2.txt
+
+if ($argc <= 1)
+  Print("usage: fontforge -script count_glyph.pe FOOBAR.sfd > droid_glyph.txt")
+  Quit(0)
+endif
+
+Open($1)
+SelectWorthOutputting()
+foreach
+    u = GlyphInfo('Unicode')
+    if (u >= 0)
+      Print(UCodePoint(u))
+    endif
+endloop
