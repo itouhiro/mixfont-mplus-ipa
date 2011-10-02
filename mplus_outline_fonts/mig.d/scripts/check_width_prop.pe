@@ -1,0 +1,31 @@
+#!/usr/bin/env fontforge -script
+# check glyph width for proportional font
+#
+# usage: for F in m*-[12][pcdv]*ttf; do echo $F; fontforge -script mig.d/scripts/check_width_mono.pe $F; done | tee width_prop.txt
+
+if ($argc <= 1)
+  Print("usage: fontforge -script check_width_prop.pe FOOBAR.ttf")
+  Quit(0)
+endif
+
+Open($1)
+SelectWorthOutputting()
+foreach
+    u = GlyphInfo('Unicode')
+
+    # U+3000-303F    CJK Symbols and Punctuation     CJKの記号及び句読点
+    # U+31C0-31EF    CJK Strokes                     CJKの筆画
+    # U+31F0-31FF    Katakana Phonetic Extensions    片仮名拡張
+    # U+3200-32FF    Enclosed CJK Letters and Months 囲みCJK文字・月
+    # U+3300-33FF    CJK Compatibility               CJK互換用文字
+    # U+3400-4DBF    CJK Unified Ideographs Extension A      CJK統合漢字拡張A
+    # U+4E00-9FFF    CJK Unified Ideographs          CJK統合漢字
+    # U+F900-FAFF    CJK Compatibility Ideographs    CJK互換漢字
+    # U+FF00-FF60    Halfwidth and Fullwidth Forms   半角・全角形(の全角部分)
+    if ((u >= 0u3000 && u <= 0u303f) || (u >= 0u31c0 && u <= 0u9fff) || (u >= 0uf900 && u <= 0ufaff) || (u >= 0uff00 && u <= 0uff60))
+        w = GlyphInfo('Width')
+        if (w != 1000 && DrawsSomething(u))
+           Print('Width is not 1000: ', Utf8(u),' ', UCodePoint(u))
+        endif
+    endif
+endloop
