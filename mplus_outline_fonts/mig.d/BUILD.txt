@@ -1,0 +1,91 @@
+# How to build MigMix/Migu TrueType font
+Time-stamp: <Mar 08 2020>
+
+
+## MigMix 
+
+  1. get the M+ fonts TrueType files
+
+    from http://mplus-fonts.osdn.jp/mplus-outline-fonts/download/
+
+    (You need to extract 'tar.xz' to 'ttf')
+    $ tar Jxvf mplus-TESTFLIGHT*.tar.xz
+
+
+  2. get IPA fonts 'sfd' files
+
+    $ wget 'http://osdn.jp/cvs/view/mix-mplus-ipa/mixfont-mplus-ipa/mplus_outline_fonts/mig.d/sfd.d/IPAGothic-regular.sfd.xz?&view=co'; mv IPAGothic-regular.sfd.xz\?view=co IPAGothic-regular.sfd.xz
+    $ wget 'http://osdn.jp/cvs/view/mix-mplus-ipa/mixfont-mplus-ipa/mplus_outline_fonts/mig.d/sfd.d/IPAGothic-bold.sfd.xz?view=co'; mv IPAGothic-bold.sfd.xz\?view=co IPAGothic-bold.sfd.xz
+
+    or
+    access with a web browser and download 'IPAGothic-*.sfd.xz'
+    [ http://osdn.jp/cvs/view/mix-mplus-ipa/mixfont-mplus-ipa/mplus_outline_fonts/mig.d/sfd.d/ ]
+
+    (You need to extract 'sfd.xz' to 'sfd')
+    $ xz -d *.xz
+
+
+  3. get a merge script
+
+    $ wget 'http://osdn.jp/cvs/view/mix-mplus-ipa/mixfont-mplus-ipa/mplus_outline_fonts/mig.d/migmix.py?view=co'; mv migmix.py\?view=co migmix.py
+
+    or 
+    access with a web browser and download 'migmix.py'
+    [ http://osdn.jp/cvs/view/mix-mplus-ipa/mixfont-mplus-ipa/mplus_outline_fonts/mig.d/ ]
+
+
+  4. merge M+ TrueType and IPA fonts
+
+    $ fontforge -script migmix.py <MPLUS_TRUETYPEFONT_DIR> <IPAFONT_DIR>
+
+    (example)
+    $ fontforge -script migmix.py ../mplus-TESTFLIGHT-063a mixfont-mplus-ipa/mplus_outline_fonts/mig.d/sfd.d    
+
+    (example: If you put mplus-*.ttf, IPAGothic-*.sfd, migmix.py at the same directory)
+    $ fontforge -script migmix.py . .
+
+
+  5. You will get MigMix
+
+    $ ls migmix*ttf
+
+
+
+
+## Migu
+
+  1. get the source of M+ font
+
+    $ cvs -d:pserver:anonymous@cvs.osdn.jp:/cvsroot/mplus-fonts login
+    CVS password: [Enter]
+    $ cvs -z3 -d:pserver:anonymous@cvs.osdn.jp:/cvsroot/mplus-fonts co mplus_outline_fonts
+
+    (ref. http://mplus-fonts.osdn.jp/mplus-outline-fonts/download/#cvs)
+
+
+  2. get the patches for Migu
+
+    $ cvs -d:pserver:anonymous@cvs.osdn.jp:/cvsroot/mix-mplus-ipa login
+    CVS password: [Enter]
+    $ cvs -z3 -d:pserver:anonymous@cvs.osdn.jp:/cvsroot/mix-mplus-ipa co mixfont-mplus-ipa
+    $ cp -pr mixfont-mplus-ipa/mplus_outline_fonts/mig.d mplus_outline_fonts/
+
+    (ref. http://mix-mplus-ipa.osdn.jp/download.html#build)
+
+
+  3. build Migu
+
+    $ cd mplus_outline_fonts/
+    $ sh mig.d/migu_build.sh
+    $ sh mig.d/migu_merge.sh
+
+    (If you want to record logs, do instead above.)
+    $ sh mig.d/migu_build.sh 2>&1 | tee `date +%Y%m%d-%H%M`.log
+    $ sh mig.d/migu_merge.sh 2>&1 | tee `date +%Y%m%d-%H%M`.log
+
+  4. You will get Migu
+
+    $ ls migu-*.ttf
+
+-- 
+itouhiro
